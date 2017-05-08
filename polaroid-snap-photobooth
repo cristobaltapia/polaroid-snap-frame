@@ -1,11 +1,19 @@
 #!/bin/bash
 
-convert $1 -geometry 50%x50% aux_1.jpeg
-convert $2 -geometry 50%x50% aux_2.jpeg
-convert $3 -geometry 50%x50% aux_3.jpeg
-convert $4 -geometry 50%x50% aux_4.jpeg
+# Output file name
+outname=photoboot-snap.jpeg
 
-montage aux_[1-4].jpeg -tile 2x2 -geometry +30+30 out.jpeg
+# Separation between images (in pixels)
+insep=30
+
+montage \( $1 -geometry 50%x50% \) \
+        \( $2 -geometry 50%x50% \) \
+        \( $3 -geometry 50%x50% \) \
+        \( $4 -geometry 50%x50% \) \
+        -tile 2x2 -geometry +${insep}+${insep} aux_1.jpeg
+
+# add extra border on the outside
+convert aux_1.jpeg -bordercolor white -border ${insep} ${outname}
 
 rm aux_*.jpeg
 

@@ -1,25 +1,39 @@
 #!/bin/bash
 
-first=$1
-outname=snap-${first}
+photo=$1
+outname=snap-${photo}
 
 # TODO: get the original size of the image
 
 # Dimensions of the picture (in pixels)
-w=1200
-h=900
+w=1520.0
+h=1000.0
 
-# Size of the border at the bottom
-brbot=200
+# needed crop to pass from 4:3 to 7.6:5
+bcrop=`echo "0.1228 * $h" | bc`
 
-# size of the borders
-brsides=50
+# Size of the borders
+r_bleft=0.159
+r_bright=0.033
+r_btop=0.06
+r_bbottom=0.06
+
+bleft=`echo "$r_bleft * $w" | bc`
+bright=`echo "$r_bright * $w" | bc`
+btop=`echo "$r_btop * $h" | bc`
+bbottom=`echo "$r_bbottom * $h" | bc`
+
+brsides=`echo "$bright - $bleft" | bc`
 
 # Process the image with imageMagick
-convert ${first} -geometry ${w}x${h} aux_1.jpeg
-convert aux_1.jpeg -crop +$brbot+$brsides aux_2.jpeg
-convert aux_2.jpeg -crop -$brsides-$brsides aux_3.jpeg
-convert aux_3.jpeg -bordercolor white -border $brsides aux_4.jpeg
-convert aux_4.jpeg -gravity west -extent ${w}x${h}-150+0 ${outname}
+convert ${photo} -geometry ${h}x${h} -crop +0-${bcrop} \
+        -geometry ${w}x${h} \
+        -crop -${bright}+${btop} \
+        -crop +${bleft}-${bbottom} \
+        aux_1.jpeg
 
+convert -size ${w}x${h} xc:white \
+    aux_1.jpeg -geometry +${bleft}+${btop} -composite ${outname}
+
+# Delete temporary files
 rm aux_*.jpeg
