@@ -3,5 +3,23 @@
 first=$1
 outname=snap-${first}
 
-# convert ${1} -mattecolor white -frame 5%x5%+5%+5% -gravity east -extent 110%x100% snap-${1}
-convert ${first} -mattecolor white -crop 100%x100%+20%-20% -gravity east ${outname}
+# TODO: get the original size of the image
+
+# Dimensions of the picture (in pixels)
+w=1200
+h=900
+
+# Size of the border at the bottom
+brbot=200
+
+# size of the borders
+brsides=50
+
+# Process the image with imageMagick
+convert ${first} -geometry ${w}x${h} aux_1.jpeg
+convert aux_1.jpeg -crop +$brbot+$brsides aux_2.jpeg
+convert aux_2.jpeg -crop -$brsides-$brsides aux_3.jpeg
+convert aux_3.jpeg -bordercolor white -border $brsides aux_4.jpeg
+convert aux_4.jpeg -gravity west -extent ${w}x${h}-150+0 ${outname}
+
+rm aux_*.jpeg
