@@ -1,0 +1,11 @@
+#!/bin/bash
+
+convert $1 -geometry 50%x50% aux_1.jpeg
+convert $2 -geometry 50%x50% aux_2.jpeg
+convert $3 -geometry 50%x50% aux_3.jpeg
+convert $4 -geometry 50%x50% aux_4.jpeg
+
+montage aux_[1-4].jpeg -tile 2x2 -geometry +30+30 out.jpeg
+
+rm aux_*.jpeg
+

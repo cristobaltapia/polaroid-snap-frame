@@ -1,0 +1,7 @@
+#!/bin/bash
+
+first=$1
+outname=snap-${first}
+
+# convert ${1} -mattecolor white -frame 5%x5%+5%+5% -gravity east -extent 110%x100% snap-${1}
+convert ${first} -mattecolor white -crop 100%x100%+20%-20% -gravity east ${outname}
