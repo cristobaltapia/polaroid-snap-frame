@@ -18,7 +18,7 @@ You can just clone this repository and use the scripts directly (given execution
 
 ### Requirements
 
-This script has only been tested under Linux so I am !00% sure that it will not work under Windows.
+This script has only been tested under Linux and I am 100% sure that it will not work under Windows.
 As for MacOS, I don't know. Maybe it works.
 
 Also, imageMagick has to be installed in the system.
