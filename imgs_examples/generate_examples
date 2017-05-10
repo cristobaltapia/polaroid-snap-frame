@@ -2,5 +2,7 @@
 
 ../polaroid-snap SNAP_00033.JPG
 
-montage snap-original-out.jpeg snap-SNAP_00033.JPG -tile 2x1 \
-        -geometry 400x400 -frame 0 -border 20 -background black example-frame.jpeg
+montage -label 'Original' snap-original-out.jpeg \
+        -label 'Processed' snap-SNAP_00033.JPG \
+        -tile 2x1 \
+        -geometry 400x400 -frame 0 -border 20 -background wheat example-frame.jpeg
