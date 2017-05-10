@@ -1,5 +1,7 @@
 # Polaroid-SNAP script
 
+![title](imgs_examples/example-frame-small.jpeg)
+
 A simple imageMagick script to apply the same frame as the one obtained when taking a picture with the Polaroid-SNAP.
 It also implements the photobooth option, in order to get four pictures in one image with the respective spacings and frames.
 

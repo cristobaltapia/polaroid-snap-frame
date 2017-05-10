@@ -8,3 +8,8 @@ montage -label 'Digital version saved by the Polaroid-SNAP' SNAP_00033.JPG \
         -label 'Digital version processed with the script' snap-SNAP_00033.JPG \
         -tile 2x2 \
         -geometry 400x400 -frame 0 -border 20 -background wheat example-frame.jpeg
+
+montage null: snap-original-out.jpeg \
+        snap-SNAP_00033.JPG \
+        -tile 4x1 null: \
+        -geometry 210x150 -frame 0 -border 10 -background wheat example-frame-small.jpeg
