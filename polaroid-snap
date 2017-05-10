@@ -13,27 +13,54 @@ h=1000.0
 bcrop=`echo "0.1228 * $h" | bc`
 
 # Size of the borders
-r_bleft=0.159
-r_bright=0.033
-r_btop=0.06
-r_bbottom=0.06
+# - top:
+r_border_t=0.06
+# - bottom:
+r_border_b=0.06
+# - left:
+r_border_l=0.159
+# - right:
+r_border_r=0.033
 
-bleft=`echo "$r_bleft * $w" | bc`
-bright=`echo "$r_bright * $w" | bc`
-btop=`echo "$r_btop * $h" | bc`
-bbottom=`echo "$r_bbottom * $h" | bc`
+# Calculate white borders based on the percentages
+border_t=`echo "$r_border_t * $h" | bc`
+border_b=`echo "$r_border_b * $h" | bc`
+border_l=`echo "$r_border_l * $w" | bc`
+border_r=`echo "$r_border_r * $w" | bc`
 
-brsides=`echo "$bright - $bleft" | bc`
+# Size of the regions to be cropped in the image
+# - top:
+r_crop_t=0.05
+# - bottom:
+r_crop_b=0.055
+# - left:
+r_crop_l=0.035
+# - right:
+r_crop_r=0.035
+
+# cropped regions of the original image
+# - top:
+crop_t=`echo "$r_crop_t * $h" | bc`
+# - bottom:
+crop_b=`echo "$r_crop_b * $h" | bc`
+# - left:
+crop_l=`echo "$r_crop_l * $w" | bc`
+# - right:
+crop_r=`echo "$r_crop_r * $w" | bc`
+
+# size of the inner image
+ww=`echo "$w - $border_l - $border_r" | bc`
+hh=`echo "$h - $border_t - $border_b" | bc`
 
 # Process the image with imageMagick
-convert ${photo} -geometry ${h}x${h} -crop +0-${bcrop} \
-        -geometry ${w}x${h} \
-        -crop -${bright}+${btop} \
-        -crop +${bleft}-${bbottom} \
+convert ${photo} -geometry ${h}x${h} -crop +0-0 \
+        -geometry ${ww}x${hh} \
+        -crop -${crop_r}+${crop_t} \
+        -crop +${crop_l}-${crop_b} \
         aux_1.jpeg
 
 convert -size ${w}x${h} xc:white \
-    aux_1.jpeg -geometry +${bleft}+${btop} -composite ${outname}
+    aux_1.jpeg -geometry ${ww}x${hh}+${border_l}+${border_t} -composite ${outname}
 
 # Delete temporary files
 rm aux_*.jpeg
