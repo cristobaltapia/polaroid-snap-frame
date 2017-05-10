@@ -34,7 +34,7 @@ It takes only one argument, the location of the image you want to add the frame 
 $ polaroid-snap image_001.jpeg
 ```
 
-![Example frame](imgs_examples/example-frame-original-out.jpeg)
+![Example frame](imgs_examples/example-frame.jpeg)
 
 
 
