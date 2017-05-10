@@ -2,7 +2,9 @@
 
 ../polaroid-snap SNAP_00033.JPG
 
-montage -label 'Original' snap-original-out.jpeg \
-        -label 'Processed' snap-SNAP_00033.JPG \
-        -tile 2x1 \
+montage -label 'Digital version saved by the Polaroid-SNAP' SNAP_00033.JPG \
+        null: \
+        -label 'Printed by the Polaroid-SNAP' snap-original-out.jpeg \
+        -label 'Digital version processed with the script' snap-SNAP_00033.JPG \
+        -tile 2x2 \
         -geometry 400x400 -frame 0 -border 20 -background wheat example-frame.jpeg
