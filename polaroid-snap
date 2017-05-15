@@ -83,7 +83,7 @@ function apply_frame()
     border_r=`echo "$r_border_r * $w" | bc`
 
     # Size of the regions to be cropped in the image
-    set_crop_frame
+    set_crop_region
 
     # cropped regions of the original image
     # - top:
@@ -113,7 +113,7 @@ function apply_frame()
 }    # ----------  end of function apply_frame  ----------
 
 
-function set_crop_frame() {
+function set_crop_region() {
     if [ "$move" == "center" ]; then
         a_t=0.05
         a_b=0.055
