@@ -1,20 +1,60 @@
 #!/bin/bash
 
+__ScriptVersion="0.1"
 
-# Print the help message
-function usage()
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Display usage information.
+#===============================================================================
+function usage ()
 {
-    echo ""
-    echo "usage: polaroid-snap [[[-i file ] [-o]] | [-h]]"
-    echo ""
-    echo "Options:"
-    echo "-i, --input:          input file name"
-    echo "-p, --photobboth:     input file name (4 files)"
-    echo "-o, --outpu:          output file name"
-    echo ""
-}
+    echo "Usage :  polaroid-snap [options] [--]
 
-# Function to create the frame around the image
+    Options:
+    -i|input      Input file
+    -h|help       Display this message
+    -v|version    Display script version"
+
+}    # ----------  end of function usage  ----------
+
+#-----------------------------------------------------------------------
+#  Handle command line arguments
+#-----------------------------------------------------------------------
+
+# Option for anable/disable photobooth mode
+photobooth=false
+# Default image file (first passed argument
+photo1=$1
+# Variable for the output file
+outfile=
+
+
+while getopts ":i:o:p:hv" opt
+do
+  case $opt in
+    i|input       )  photo1=${OPTARG} ;;
+    p|photobooth  )  eval "photo1=\$$((OPTIND-1))"
+                     eval "photo2=\$$((OPTIND+0))"
+                     eval "photo3=\$$((OPTIND+1))"
+                     eval "photo4=\$$((OPTIND+2))"
+                     photobooth=true
+                     ;;
+    o|output      )  outfile=${OPTARG} ;;
+    h|help        )  usage; exit 0   ;;
+
+    v|version     )  echo "$0 -- Version $__ScriptVersion"; exit 0   ;;
+
+    * )  echo -e "\n  Option does not exist : $OPTARG\n"
+          usage; exit 1   ;;
+
+  esac    # --- end of case ---
+done
+shift $(($OPTIND-1))
+
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Creates frame around the image
+#===============================================================================
 function apply_frame()
 {
     # Size of the borders
@@ -68,9 +108,13 @@ function apply_frame()
             aux_1.jpeg -geometry ${ww}x${hh}+${border_l}+${border_t} \
             -composite ${outfile}
 
-}
+}    # ----------  end of function apply_frame  ----------
 
-# define photobooth function
+
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Reproduces the Photobboth style
+#===============================================================================
 function apply_photobooth()
 {
     # Size of the borders
@@ -133,50 +177,14 @@ function apply_photobooth()
             aux_3.jpeg -geometry ${ww}x${hh}+${pos_x1}+${pos_y2} -composite \
             aux_4.jpeg -geometry ${ww}x${hh}+${pos_x2}+${pos_y2} -composite \
             ${outfile}
-}
+}    # ----------  end of function apply_photobooth  ----------
 
-
-# Option for anable/disable photobooth mode
-photobooth=false
-# Default image file (first passed argument
-photo1=$1
-# Variable for the output file
-outfile=
-
-# Get the passed arguments
-while [ "$1" != "" ]; do
-    case $1 in
-        -i | --input )  shift
-                        photo1=$1
-                        ;;
-        -o | --output ) shift
-                        outfile=$1
-                        ;;
-        -p | --photobooth ) shift
-                        photobooth=true
-                        photo1=$1
-                        shift
-                        photo2=$1
-                        shift
-                        photo3=$1
-                        shift
-                        photo4=$1
-                        ;;
-        -h | --help )   usage
-                        exit
-                        ;;
-        * )             usage
-                        exit 1
-    esac
-    shift
-done
 
 # Get extension of the image
 extension="${photo1##*.}"
 
 # Set the extension to the output file
-if [ "$outfile" == "" ]
-then
+if [ "$outfile" == "" ]; then
     outfile=out.$extension
 fi
 
@@ -187,8 +195,7 @@ fi
 w=1520
 h=1000
 
-if [ "$photobooth" == false ]
-then
+if [ "$photobooth" == false ]; then
     apply_frame
 else
     apply_photobooth
