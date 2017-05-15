@@ -9,22 +9,156 @@ function usage()
     echo ""
     echo "Options:"
     echo "-i, --input:          input file name"
+    echo "-p, --photobboth:     input file name (4 files)"
     echo "-o, --outpu:          output file name"
     echo ""
 }
 
+# Function to create the frame around the image
+function apply_frame()
+{
+    # Size of the borders
+    # - top:
+    r_border_t=0.06
+    # - bottom:
+    r_border_b=0.06
+    # - left:
+    r_border_l=0.159
+    # - right:
+    r_border_r=0.033
 
-photo=$1
+    # Calculate white borders based on the percentages
+    border_t=`echo "$r_border_t * $h" | bc`
+    border_b=`echo "$r_border_b * $h" | bc`
+    border_l=`echo "$r_border_l * $w" | bc`
+    border_r=`echo "$r_border_r * $w" | bc`
+
+    # Size of the regions to be cropped in the image
+    # - top:
+    r_crop_t=0.05
+    # - bottom:
+    r_crop_b=0.055
+    # - left:
+    r_crop_l=0.035
+    # - right:
+    r_crop_r=0.035
+
+    # cropped regions of the original image
+    # - top:
+    crop_t=`echo "$r_crop_t * $h" | bc`
+    # - bottom:
+    crop_b=`echo "$r_crop_b * $h" | bc`
+    # - left:
+    crop_l=`echo "$r_crop_l * $w" | bc`
+    # - right:
+    crop_r=`echo "$r_crop_r * $w" | bc`
+
+    # size of the inner image
+    ww=`echo "$w - $border_l - $border_r" | bc`
+    hh=`echo "$h - $border_t - $border_b" | bc`
+
+    # Process the image with imageMagick
+    convert ${photo1} -geometry ${h}x${h} \
+            -geometry ${ww}x${hh} \
+            -crop -${crop_r}+${crop_t} \
+            -crop +${crop_l}-${crop_b} \
+            aux_1.jpeg
+
+    convert -size ${w}x${h} xc:white \
+            aux_1.jpeg -geometry ${ww}x${hh}+${border_l}+${border_t} \
+            -composite ${outfile}
+
+}
+
+# define photobooth function
+function apply_photobooth()
+{
+    # Size of the borders
+    # - top:
+    r_border_t=0.043
+    # - bottom:
+    r_border_b=0.039
+    # - left:
+    r_border_l=0.043
+    # - right:
+    r_border_r=0.023
+    # - separation of single photos
+    sep_in=0.022
+
+    # Calculate white borders based on the percentages
+    border_t=`echo "$r_border_t * $h" | bc`
+    border_b=`echo "$r_border_b * $h" | bc`
+    border_l=`echo "$r_border_l * $w" | bc`
+    border_r=`echo "$r_border_r * $w" | bc`
+    insep=`echo "$sep_in * $w" | bc`
+
+
+    # Size of the regions to be cropped in the image
+    # - top:
+    r_crop_t=0.22
+    # - bottom:
+    r_crop_b=0.21
+    # - left:
+    r_crop_l=0.0
+    # - right:
+    r_crop_r=0.0
+
+    # cropped regions of the original image
+    # - top:
+    crop_t=`echo "$r_crop_t * $h" | bc`
+    # - bottom:
+    crop_b=`echo "$r_crop_b * $h" | bc`
+    # - left:
+    crop_l=`echo "$r_crop_l * $w" | bc`
+    # - right:
+    crop_r=`echo "$r_crop_r * $w" | bc`
+
+    # size of the inner image
+    ww=`echo "$w * 0.453 " | bc`
+    hh=`echo "$h * 0.439 " | bc`
+
+    # calculate positions of each image
+    pos_x1=$border_l
+    pos_x2=`echo "$border_l + $ww + $insep" | bc`
+    pos_y1=$border_t
+    pos_y2=`echo "$border_t + $hh + $insep" | bc`
+
+    convert $photo1 -crop -${crop_r}+${crop_t} -crop +${crop_l}-${crop_b} -geometry ${ww}x${hh} aux_1.jpeg
+    convert $photo2 -crop -${crop_r}+${crop_t} -crop +${crop_l}-${crop_b} -geometry ${ww}x${hh} aux_2.jpeg
+    convert $photo3 -crop -${crop_r}+${crop_t} -crop +${crop_l}-${crop_b} -geometry ${ww}x${hh} aux_3.jpeg
+    convert $photo4 -crop -${crop_r}+${crop_t} -crop +${crop_l}-${crop_b} -geometry ${ww}x${hh} aux_4.jpeg
+
+    convert -size ${w}x${h} xc:white \
+            aux_1.jpeg -geometry ${ww}x${hh}+${pos_x1}+${pos_y1} -composite \
+            aux_2.jpeg -geometry ${ww}x${hh}+${pos_x2}+${pos_y1} -composite \
+            aux_3.jpeg -geometry ${ww}x${hh}+${pos_x1}+${pos_y2} -composite \
+            aux_4.jpeg -geometry ${ww}x${hh}+${pos_x2}+${pos_y2} -composite \
+            ${outfile}
+}
+
+
+photobooth=0
+photo1=$1
 outfile=
 
 # Get the passed arguments
 while [ "$1" != "" ]; do
     case $1 in
         -i | --input )  shift
-                        photo=$1
+                        photo1=$1
                         ;;
         -o | --output ) shift
                         outfile=$1
+                        ;;
+        -p | --photobooth ) shift
+                        photobooth=1
+                        photo1=$1
+                        shift
+                        photo2=$1
+                        shift
+                        photo3=$1
+                        shift
+                        photo4=$1
                         ;;
         -h | --help )   usage
                         exit
@@ -36,7 +170,7 @@ while [ "$1" != "" ]; do
 done
 
 # Get extension of the image
-extension="${photo##*.}"
+extension="${photo1##*.}"
 
 # Set the extension to the output file
 if [ "$outfile" == "" ]
@@ -51,56 +185,13 @@ fi
 w=1520
 h=1000
 
-# Size of the borders
-# - top:
-r_border_t=0.06
-# - bottom:
-r_border_b=0.06
-# - left:
-r_border_l=0.159
-# - right:
-r_border_r=0.033
+if [ "$photobooth" == 0 ]
+then
+    apply_frame
+else
+    apply_photobooth
+fi
 
-# Calculate white borders based on the percentages
-border_t=`echo "$r_border_t * $h" | bc`
-border_b=`echo "$r_border_b * $h" | bc`
-border_l=`echo "$r_border_l * $w" | bc`
-border_r=`echo "$r_border_r * $w" | bc`
-
-# Size of the regions to be cropped in the image
-# - top:
-r_crop_t=0.05
-# - bottom:
-r_crop_b=0.055
-# - left:
-r_crop_l=0.035
-# - right:
-r_crop_r=0.035
-
-# cropped regions of the original image
-# - top:
-crop_t=`echo "$r_crop_t * $h" | bc`
-# - bottom:
-crop_b=`echo "$r_crop_b * $h" | bc`
-# - left:
-crop_l=`echo "$r_crop_l * $w" | bc`
-# - right:
-crop_r=`echo "$r_crop_r * $w" | bc`
-
-# size of the inner image
-ww=`echo "$w - $border_l - $border_r" | bc`
-hh=`echo "$h - $border_t - $border_b" | bc`
-
-# Process the image with imageMagick
-convert ${photo} -geometry ${h}x${h} \
-        -geometry ${ww}x${hh} \
-        -crop -${crop_r}+${crop_t} \
-        -crop +${crop_l}-${crop_b} \
-        aux_1.jpeg
-
-convert -size ${w}x${h} xc:white \
-        aux_1.jpeg -geometry ${ww}x${hh}+${border_l}+${border_t} \
-        -composite ${outfile}
 
 # Delete temporary files
 rm aux_*.jpeg
