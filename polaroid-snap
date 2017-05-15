@@ -13,24 +13,29 @@ function usage ()
     Options:
     -i|input           Input file
     -p|photobooth      4 input files
+    -m|move            Move the position of the image within the frame:
+                       Options: top, bottom, left, right,
     -h|help            Display this message
     -v|version         Display script version"
 
 }    # ----------  end of function usage  ----------
 
-#-----------------------------------------------------------------------
-#  Handle command line arguments
-#-----------------------------------------------------------------------
 
+#-----------------------------------------------------------------------
 # Option for anable/disable photobooth mode
 photobooth=false
 # Default image file (first passed argument
 photo1=$1
 # Variable for the output file
 outfile=
+# move picture within frame
+move=center
 
+#-----------------------------------------------------------------------
+#  Handle command line arguments
+#-----------------------------------------------------------------------
 
-while getopts ":i:p:o:hv" opt
+while getopts ":i:p:m:o:hv" opt
 do
   case $opt in
     i|input       )  photo1=${OPTARG} ;;
@@ -42,6 +47,7 @@ do
                      # shift getopts' index
                      OPTIND=$((OPTIND+3))
                      ;;
+    m|move        )  move=${OPTARG} ;;
     o|output      )  outfile=${OPTARG} ;;
     h|help        )  usage; exit 0   ;;
 
@@ -77,14 +83,7 @@ function apply_frame()
     border_r=`echo "$r_border_r * $w" | bc`
 
     # Size of the regions to be cropped in the image
-    # - top:
-    r_crop_t=0.05
-    # - bottom:
-    r_crop_b=0.055
-    # - left:
-    r_crop_l=0.035
-    # - right:
-    r_crop_r=0.035
+    set_crop_frame
 
     # cropped regions of the original image
     # - top:
@@ -114,12 +113,34 @@ function apply_frame()
 }    # ----------  end of function apply_frame  ----------
 
 
+function set_crop_frame() {
+    if [ "$move" == "center" ]; then
+        a_t=0.05
+        a_b=0.055
+        a_l=0.035
+        a_r=0.035
+    elif [ "$move" == "top-right" ]; then
+        a_t=0.0
+        a_b=0.105
+        a_l=0.070
+        a_r=0.0
+    fi
+    # - top:
+    r_crop_t=$a_t
+    # - bottom:
+    r_crop_b=$a_b
+    # - left:
+    r_crop_l=$a_l
+    # - right:
+    r_crop_r=$a_r
+}
+
+
 #===  FUNCTION  ================================================================
 #         NAME:  usage
 #  DESCRIPTION:  Reproduces the Photobboth style
 #===============================================================================
-function apply_photobooth()
-{
+function apply_photobooth() {
     # Size of the borders
     # - top:
     r_border_t=0.043
