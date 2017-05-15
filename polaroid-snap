@@ -92,7 +92,6 @@ function apply_photobooth()
     border_r=`echo "$r_border_r * $w" | bc`
     insep=`echo "$sep_in * $w" | bc`
 
-
     # Size of the regions to be cropped in the image
     # - top:
     r_crop_t=0.22
@@ -137,8 +136,11 @@ function apply_photobooth()
 }
 
 
-photobooth=0
+# Option for anable/disable photobooth mode
+photobooth=false
+# Default image file (first passed argument
 photo1=$1
+# Variable for the output file
 outfile=
 
 # Get the passed arguments
@@ -151,7 +153,7 @@ while [ "$1" != "" ]; do
                         outfile=$1
                         ;;
         -p | --photobooth ) shift
-                        photobooth=1
+                        photobooth=true
                         photo1=$1
                         shift
                         photo2=$1
@@ -185,7 +187,7 @@ fi
 w=1520
 h=1000
 
-if [ "$photobooth" == 0 ]
+if [ "$photobooth" == false ]
 then
     apply_frame
 else
