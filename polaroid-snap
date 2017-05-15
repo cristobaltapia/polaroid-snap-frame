@@ -29,7 +29,7 @@ photo1=$1
 outfile=
 
 
-while getopts ":i:o:p:hv" opt
+while getopts ":i:p:o:hv" opt
 do
   case $opt in
     i|input       )  photo1=${OPTARG} ;;
@@ -38,6 +38,8 @@ do
                      eval "photo3=\$$((OPTIND+1))"
                      eval "photo4=\$$((OPTIND+2))"
                      photobooth=true
+                     # shift getopts' index
+                     OPTIND=$((OPTIND+3))
                      ;;
     o|output      )  outfile=${OPTARG} ;;
     h|help        )  usage; exit 0   ;;
@@ -184,6 +186,7 @@ function apply_photobooth()
 extension="${photo1##*.}"
 
 # Set the extension to the output file
+echo $outfile
 if [ "$outfile" == "" ]; then
     outfile=out.$extension
 fi
