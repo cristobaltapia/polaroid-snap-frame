@@ -11,9 +11,10 @@ function usage ()
     echo "Usage :  polaroid-snap [options] [--]
 
     Options:
-    -i|input      Input file
-    -h|help       Display this message
-    -v|version    Display script version"
+    -i|input           Input file
+    -p|photobooth      4 input files
+    -h|help            Display this message
+    -v|version         Display script version"
 
 }    # ----------  end of function usage  ----------
 
