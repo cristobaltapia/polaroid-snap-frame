@@ -9,9 +9,9 @@ It also implements the photobooth option, in order to get four pictures in one i
 
 The Polaroid SNAP is a great camera for taking pictures with your friends and just *capture the moment*.
 The nice retro effect added by the white frame is a nice touch, but it's not kept in the digital version of the picture saved to the SD-Card.
-I was actually a bit disappointed of this and thought that it would be nice to have a script to introduce the same effect to the digital version (just for fun).
+I was actually a bit disappointed about this and thought that it would be nice to have a script to introduce the same effect to the digital version (just for fun).
 That's how this script was born!
-A second script is capable of simulate the photobooth effect, too, which enables to put four pictures in one image.
+There is also an option to emulate the Photobooth functionality, which is activated if the option ``-p`` is passed (after which four image files are expected).
 
 None of this is revolutionary in any sense, but it is very practical and I just like to have these digital versions of the printed pictures.
 
