@@ -1,4 +1,13 @@
 #!/bin/bash
+#======================================================================
+# Project           : Polaroid-SNAP script
+#
+# Author            : Cristóbal Tapia Camú (crtapia at gmail dot com)
+#
+# Description       : A simple imageMagick script to apply to an image the same
+#                     frame as obtained when taking a picture with the Polaroid-SNAP
+#
+#=======================================================================
 
 __ScriptVersion="0.1"
 
